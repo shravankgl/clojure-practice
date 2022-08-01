@@ -116,9 +116,19 @@
     (= "q" input) (println "quit")
     ))
 
-(loop [game-board (play-next game-board)]
+
+(loop [game-board (play-next (add-cell game-board))]
   (if (= game-board nil) (println "quit")
-      (do
+      (do 
+        (check-win game-board)
       (draw-board game-board)
-      (recur (play-next game-board)))
+      (recur (play-next (add-cell game-board))))
   ))
+
+(defn check-win [game-board]
+  (cond
+    (contains? game-board win-num ) (println "you win")
+    (= (contains? game-board 0) false ) (println "you lose")
+    )
+  )
+
