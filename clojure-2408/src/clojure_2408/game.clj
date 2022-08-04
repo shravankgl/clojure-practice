@@ -94,13 +94,16 @@
           (draw-board (add-cell (execute input game-board))))
       (do (println "invalid input") game-board))))
 
+(defn no-same-adjacent [coll]
+  (= coll (dedupe coll)))
 
-(defn check-win [game-board win-num]
-  (cond
-    (contains? game-board win-num)  (println "you win")
-    (= (contains? game-board 0) false) (println "you lose")
-    :else game-board))
+(defn game-won? [game-board win-num]
+  (= (apply max game-board) win-num))
 
+(defn game-lost? [game-board]
+  (and (every? no-same-adjacent (get-rows game-board))
+       (every? no-same-adjacent (get-columns game-board))
+       (> (apply min game-board) 0)))
 
 (defn play-2048
   "Play 2048 the game"
@@ -112,6 +115,7 @@
     (loop [input game-board]
       (if (= input "q") (println "game over")
           (cond
-            (= (apply max input) win-num)  (println "you win")
-            (> (apply min input) 0)  (println "you lose")
+            (game-won? input win-num)  (println "you win")
+            (game-lost? input)  (println "you lose")
             :else (recur (play-next input)))))))
+
