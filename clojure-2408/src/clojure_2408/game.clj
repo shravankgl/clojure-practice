@@ -27,15 +27,13 @@
     (assoc (vec game-board) random-cell (pick-rand-value)))))
 
 (defn get-rows [game-board]
-  (partition-all 4 game-board))
-
+  (let [width (int (Math/sqrt (count game-board)))]
+    (partition-all width game-board)))
 
 (defn get-columns [game-board]
-  (list
-   (vec (take-nth 4 game-board))
-   (vec (take-nth 4 (drop 1 game-board)))
-   (vec (take-nth 4 (drop 2 game-board)))
-   (vec (take-nth 4 (drop 3 game-board)))))
+   (let [width (int (Math/sqrt (count game-board)))] 
+      (vec (apply map vector (partition width game-board))))
+     )
 
 (defn draw-board
   "draw the board"
@@ -89,14 +87,6 @@
     (= "s" input) (move-down game-board)
     (= "d" input) (move-right game-board)))
 
-(defn executecase [input game-board]
-  (case input
-    "w" (move-up game-board)
-    "a" (move-left game-board)
-    "s" (move-down game-board)
-    "d" (move-right game-board)
-    game-board))
-
 (defn play-next [game-board]
   (let [input (read-line)]
     (if (contains? #{"w" "a" "s" "d" "q"} input)
@@ -104,12 +94,6 @@
           (draw-board (add-cell (execute input game-board))))
       (do (println "invalid input") game-board))))
 
-(defn play-next-test [game-board]
-  (let [input (read-line)]
-    (if (contains? #{"w" "a" "s" "d" "q"} input)
-      (if (= input "q") input
-          (draw-board (add-cell game-board)))
-      (println "invalid input"))))
 
 (defn check-win [game-board win-num]
   (cond
@@ -131,4 +115,3 @@
             (= (apply max input) win-num)  (println "you win")
             (> (apply min input) 0)  (println "you lose")
             :else (recur (play-next input)))))))
-
